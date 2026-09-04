@@ -1,0 +1,46 @@
+---
+import Photo from '../Photo.astro';
+import { getDict } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+const [wide, close] = d.story.photos;
+---
+<section id="story" class="section-y">
+  <div class="container-page">
+    <div class="grid items-center gap-8 md:grid-cols-2 md:gap-12">
+      <!-- Text first in the DOM, so mobile reads the story before the photos. -->
+      <div>
+        <p class="t-eyebrow" data-reveal>{d.story.eyebrow}</p>
+        <h2 class="t-h2 mt-2 text-fg" data-reveal>{d.story.title}</h2>
+        <div class="mt-8 space-y-4">
+          {d.story.paragraphs.map((p) => <p class="t-body" data-reveal>{p}</p>)}
+        </div>
+        <p class="t-small mt-8 text-saffron" data-reveal>{d.story.caption}</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 md:gap-6">
+        <div class="overflow-hidden rounded-3xl" data-reveal="scale">
+          <Photo
+            id={wide.id}
+            alt={wide.alt}
+            ratio="3/4"
+            sizes="(min-width: 768px) 25vw, 45vw"
+            class="size-full object-cover"
+          />
+        </div>
+        <div class="mt-8 overflow-hidden rounded-3xl" data-reveal="scale" data-reveal-delay="120">
+          <Photo
+            id={close.id}
+            alt={close.alt}
+            ratio="3/4"
+            sizes="(min-width: 768px) 25vw, 45vw"
+            class="size-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

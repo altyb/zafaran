@@ -1,0 +1,53 @@
+---
+// Language gate. Static hosting has no server, so Accept-Language is not
+// available at request time — the choice is made client-side, once, and
+// remembered. Anyone without JS gets two plain links instead of a dead page.
+export const prerender = true;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zafaran · زعفران</title>
+    <meta name="description" content="Wood-fired Gulf and Levantine cooking in DIFC, Dubai. Open since 2017." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#131209" />
+    <link rel="alternate" hreflang="en" href="https://zafaran.example/en/" />
+    <link rel="alternate" hreflang="ar" href="https://zafaran.example/ar/" />
+    <link rel="alternate" hreflang="x-default" href="https://zafaran.example/en/" />
+    <script is:inline>
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('zafaran:lang'); } catch (e) {}
+        var lang = saved;
+        if (lang !== 'en' && lang !== 'ar') {
+          var prefs = navigator.languages || [navigator.language || 'en'];
+          lang = 'en';
+          for (var i = 0; i < prefs.length; i++) {
+            var p = String(prefs[i]).toLowerCase();
+            if (p === 'ar' || p.indexOf('ar-') === 0) { lang = 'ar'; break; }
+            if (p === 'en' || p.indexOf('en-') === 0) { lang = 'en'; break; }
+          }
+        }
+        location.replace('/' + lang + '/' + location.search + location.hash);
+      })();
+    </script>
+    <style>
+      html { background: #131209; color: #9B9B9B; font-family: system-ui, sans-serif; }
+      body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 24px; }
+      ul { list-style: none; display: flex; gap: 16px; padding: 0; }
+      a { color: #E9A83B; font-size: 18px; }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <nav aria-label="Choose a language">
+        <ul>
+          <li><a href="/en/">English</a></li>
+          <li><a href="/ar/" lang="ar">العربية</a></li>
+        </ul>
+      </nav>
+    </noscript>
+  </body>
+</html>

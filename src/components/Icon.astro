@@ -1,0 +1,43 @@
+---
+// Static map so Vite resolves every icon at build time. Icons are always
+// decorative — meaning lives in adjacent text or an aria-label on the parent.
+import arrowRight from '@phosphor-icons/core/assets/regular/arrow-right.svg?raw';
+import arrowUpRight from '@phosphor-icons/core/assets/regular/arrow-up-right.svg?raw';
+import caretDown from '@phosphor-icons/core/assets/regular/caret-down.svg?raw';
+import phone from '@phosphor-icons/core/assets/regular/phone.svg?raw';
+import whatsappLogo from '@phosphor-icons/core/assets/regular/whatsapp-logo.svg?raw';
+import envelopeSimple from '@phosphor-icons/core/assets/regular/envelope-simple.svg?raw';
+import instagramLogo from '@phosphor-icons/core/assets/regular/instagram-logo.svg?raw';
+import mapPin from '@phosphor-icons/core/assets/regular/map-pin.svg?raw';
+import clock from '@phosphor-icons/core/assets/regular/clock.svg?raw';
+import car from '@phosphor-icons/core/assets/regular/car.svg?raw';
+import forkKnife from '@phosphor-icons/core/assets/regular/fork-knife.svg?raw';
+import globe from '@phosphor-icons/core/assets/regular/globe.svg?raw';
+import starFill from '@phosphor-icons/core/assets/fill/star-fill.svg?raw';
+
+const ICONS: Record<string, string> = {
+  'arrow-right': arrowRight,
+  'arrow-up-right': arrowUpRight,
+  'caret-down': caretDown,
+  phone,
+  'whatsapp-logo': whatsappLogo,
+  'envelope-simple': envelopeSimple,
+  'instagram-logo': instagramLogo,
+  'map-pin': mapPin,
+  clock,
+  car,
+  'fork-knife': forkKnife,
+  globe,
+  star: starFill,
+};
+
+interface Props { name: string; class?: string; mirror?: boolean }
+const { name, class: className = 'size-5', mirror = false } = Astro.props;
+const svg = ICONS[name];
+if (!svg) throw new Error(`Icon "${name}" is not in the permitted set`);
+---
+<span
+  aria-hidden="true"
+  class:list={['inline-flex shrink-0 [&>svg]:size-full', mirror && 'rtl:-scale-x-100', className]}
+  set:html={svg}
+/>

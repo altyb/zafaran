@@ -1,0 +1,47 @@
+---
+import Photo from '../Photo.astro';
+import { getDict, formatPrice } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+---
+<section id="menu" class="section-y">
+  <div class="container-page">
+    <div data-reveal>
+      <p class="t-eyebrow">{d.menu.eyebrow}</p>
+      <h2 class="t-h2 mt-2 text-fg">{d.menu.title}</h2>
+      {d.menu.lead && <p class="t-lead mt-4 max-w-2xl">{d.menu.lead}</p>}
+    </div>
+
+    <ul class="mt-8 grid gap-4 sm:grid-cols-2 md:mt-12 md:gap-6 lg:grid-cols-3">
+      {d.menu.dishes.map((dish) => (
+        <li
+          class="group rounded-3xl border border-line bg-surface p-2 transition-colors duration-700 ease-fluid hover:border-saffron/60"
+          data-reveal
+        >
+          <!-- 8px frame inside a 24px radius → 16px inner radius (24 − 8). -->
+          <div class="overflow-hidden rounded-2xl">
+            <Photo
+              id={dish.photo.id}
+              alt={dish.photo.alt}
+              ratio="4/3"
+              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+              class="size-full object-cover transition-transform duration-700 ease-fluid group-hover:scale-[1.04]"
+            />
+          </div>
+          <div class="p-4">
+            <div class="flex items-baseline justify-between gap-4">
+              <h3 class="t-h3 text-fg">{dish.name}</h3>
+              <p class="t-price shrink-0 text-saffron">{formatPrice(locale, dish.price)}</p>
+            </div>
+            <p class="t-small mt-2">{dish.desc}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <p class="t-small mt-8" data-reveal>{d.menu.note}</p>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import { getDict } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+export function getStaticPaths() {
+  return [{ params: { locale: 'en' } }, { params: { locale: 'ar' } }];
+}
+
+const locale = Astro.params.locale as Locale;
+const d = getDict(locale);
+const page = d.legal.privacy;
+---
+<Base
+  locale={locale}
+  title={`${page.title} — ${d.common.brand}`}
+  description={page.paragraphs[0]}
+  path="privacy/"
+  noindex
+>
+  <Nav locale={locale} />
+  <main id="main" class="section-y pt-32 md:pt-40">
+    <div class="container-page">
+      <h1 class="t-h2 text-fg">{page.title}</h1>
+      <div class="mt-8 max-w-2xl space-y-4">
+        {page.paragraphs.map((p) => <p class="t-body">{p}</p>)}
+      </div>
+    </div>
+  </main>
+  <Footer locale={locale} />
+</Base>

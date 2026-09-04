@@ -1,0 +1,56 @@
+---
+import Icon from '../Icon.astro';
+import { getDict } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+---
+<section id="faq" class="section-y">
+  <div class="container-page">
+    <div data-reveal>
+      <p class="t-eyebrow">{d.faq.eyebrow}</p>
+      <h2 class="t-h2 mt-2 text-fg">{d.faq.title}</h2>
+    </div>
+
+    <!-- A description list reads as question/answer pairs to assistive tech. -->
+    <dl class="mt-8 space-y-4 md:mt-12">
+      {d.faq.items.map((item) => (
+        <div data-reveal>
+          <details name="faq" class="faq-item rounded-2xl border border-line bg-surface open:bg-surface-raised">
+            <summary class="flex cursor-pointer items-center justify-between gap-4 p-6">
+              <dt class="t-faq-q text-fg">{item.q}</dt>
+              <Icon name="caret-down" class="faq-caret size-5 shrink-0 text-saffron" />
+            </summary>
+            <dd class="t-body px-6 pb-6">{item.a}</dd>
+          </details>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  /* CSS-only accordion. No JavaScript: <details name> gives single-open for free. */
+  .faq-item { interpolate-size: allow-keywords; }
+
+  .faq-item summary { list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::marker { content: ''; }
+
+  .faq-caret { transition: rotate var(--dur-fast) var(--ease-fluid); }
+  .faq-item[open] .faq-caret { rotate: 180deg; }
+
+  .faq-item::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition: block-size var(--dur-fast) var(--ease-fluid),
+                content-visibility var(--dur-fast) allow-discrete;
+  }
+  .faq-item[open]::details-content { block-size: auto; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-caret, .faq-item::details-content { transition: none; }
+  }
+</style>

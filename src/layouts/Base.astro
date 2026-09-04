@@ -1,0 +1,80 @@
+---
+import { Font } from 'astro:assets';
+import { LOCALE_META, type Locale } from '../lib/i18n';
+import { getDict, site } from '../lib/dict';
+import '../styles/global.css';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Locale-relative, e.g. '' | 'privacy/'. Used for canonical + hreflang. */
+  path: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown>;
+  ogImage?: string;
+  ogImageAlt?: string;
+}
+
+const SITE_URL = 'https://zafaran.example';
+const DEFAULT_OG =
+  'https://images.unsplash.com/photo-1663530761401-15eefb544889?w=1200&h=630&fit=crop&q=80&auto=format';
+
+const {
+  locale, title, description, path, noindex = false, jsonLd,
+  ogImage = DEFAULT_OG, ogImageAlt,
+} = Astro.props;
+
+const d = getDict(locale);
+const meta = LOCALE_META[locale];
+const canonical = `${SITE_URL}/${locale}/${path}`;
+---
+<!doctype html>
+<html lang={locale} dir={meta.dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Set before first paint: reveal styles that start at opacity 0 are
+      // scoped to .js, so a blocked or failed script can never blank the page.
+      document.documentElement.classList.add('js');
+    </script>
+
+    <Font cssVariable="--font-manrope" preload={locale === 'en'} />
+    <Font cssVariable="--font-readex" preload={locale === 'ar'} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <link rel="alternate" hreflang="en" href={`${SITE_URL}/en/${path}`} />
+    <link rel="alternate" hreflang="ar" href={`${SITE_URL}/ar/${path}`} />
+    <link rel="alternate" hreflang="x-default" href={`${SITE_URL}/`} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#131209" />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={ogImageAlt ?? d.meta.ogAlt} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={meta.ogLocale} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+
+  <body class="bg-ink min-h-svh">
+    <a href="#main" class="skip-link t-button">
+      {locale === 'ar' ? 'تخطَّ إلى المحتوى' : 'Skip to content'}
+    </a>
+    <slot />
+    <script>
+      import '../scripts/reveal';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import StickyCta from '../../components/StickyCta.astro';
+import Hero from '../../components/sections/Hero.astro';
+import Trust from '../../components/sections/Trust.astro';
+import Story from '../../components/sections/Story.astro';
+import Menu from '../../components/sections/Menu.astro';
+import Tagline from '../../components/sections/Tagline.astro';
+import Visit from '../../components/sections/Visit.astro';
+import Faq from '../../components/sections/Faq.astro';
+import Cta from '../../components/sections/Cta.astro';
+import { getDict, site } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+export function getStaticPaths() {
+  return [{ params: { locale: 'en' } }, { params: { locale: 'ar' } }];
+}
+
+const locale = Astro.params.locale as Locale;
+const d = getDict(locale);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  name: site.name,
+  servesCuisine: ['Levantine', 'Gulf'],
+  priceRange: '$$$',
+  telephone: site.phoneE164,
+  email: site.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Gate Village, Building 7, ground floor',
+    addressLocality: 'DIFC, Dubai',
+    addressCountry: 'AE',
+  },
+  url: `https://zafaran.example/${locale}/`,
+  image: site.ogImage ?? undefined,
+};
+---
+<Base locale={locale} title={d.meta.title} description={d.meta.description} path="" jsonLd={jsonLd}>
+  <Nav locale={locale} />
+  <main id="main">
+    <Hero locale={locale} />
+    <Trust locale={locale} />
+    <Story locale={locale} />
+    <Menu locale={locale} />
+    <Tagline locale={locale} />
+    <Visit locale={locale} />
+    <Faq locale={locale} />
+    <Cta locale={locale} />
+  </main>
+  <Footer locale={locale} />
+  <StickyCta locale={locale} />
+</Base>

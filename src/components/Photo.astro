@@ -1,0 +1,38 @@
+---
+/**
+ * Unsplash photo. Deliberately not routed through <Image>: the Unsplash CDN
+ * already resizes and re-encodes, so building through sharp would download
+ * every photo at build time for no gain.
+ * Does NOT forward data-* attributes — wrap it when you need data-reveal.
+ */
+interface Props {
+  id: string;
+  alt: string;
+  ratio: '16/9' | '4/3' | '3/4';
+  sizes?: string;
+  priority?: boolean;
+  class?: string;
+}
+
+const { id, alt, ratio, sizes = '100vw', priority = false, class: className = '' } = Astro.props;
+
+const RATIOS = { '16/9': [1600, 900], '4/3': [1200, 900], '3/4': [900, 1200] } as const;
+const [width, height] = RATIOS[ratio];
+
+const url = (w: number) =>
+  `https://images.unsplash.com/photo-${id}?w=${w}&h=${Math.round((w * height) / width)}&fit=crop&q=80&auto=format`;
+
+const srcset = [480, 768, 1080, 1440, 1920].map((w) => `${url(w)} ${w}w`).join(', ');
+---
+<img
+  src={url(width)}
+  srcset={srcset}
+  sizes={sizes}
+  width={width}
+  height={height}
+  alt={alt}
+  loading={priority ? 'eager' : 'lazy'}
+  decoding="async"
+  fetchpriority={priority ? 'high' : undefined}
+  class={className}
+/>

@@ -1,0 +1,68 @@
+---
+import Icon from './Icon.astro';
+import { getDict, site, localePath, whatsappUrl } from '../lib/dict';
+import type { Locale } from '../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+---
+<footer class="border-t border-line bg-surface-deep pt-16 pb-24 md:py-16">
+  <div class="container-page">
+    <div class="grid gap-8 md:grid-cols-4 md:gap-12">
+      <div class="md:col-span-2">
+        <p class="t-wordmark text-fg">{d.common.brand}</p>
+        <p class="t-small mt-4 max-w-xs">{d.footer.blurb}</p>
+      </div>
+
+      <nav aria-labelledby="footer-explore">
+        <h2 id="footer-explore" class="t-small font-semibold text-fg">{d.footer.explore}</h2>
+        <ul class="mt-4 space-y-4">
+          {d.nav.links.map((link) => (
+            <li>
+              <a href={link.href} class="t-small transition-colors duration-700 ease-fluid hover:text-saffron">{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="t-small font-semibold text-fg">{d.footer.contact}</h2>
+        <ul class="mt-4 space-y-4">
+          <li>
+            <a href={`tel:${site.phoneE164}`} class="t-small inline-flex items-center gap-2 transition-colors duration-700 ease-fluid hover:text-saffron">
+              <Icon name="phone" class="size-4" />
+              <span dir="ltr" class="inline-block">{site.phoneDisplay}</span>
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${site.email}`} class="t-small inline-flex items-center gap-2 transition-colors duration-700 ease-fluid hover:text-saffron">
+              <Icon name="envelope-simple" class="size-4" />
+              <span dir="ltr" class="inline-block">{site.email}</span>
+            </a>
+          </li>
+          <li>
+            <a href={site.instagramUrl} target="_blank" rel="noopener" class="t-small inline-flex items-center gap-2 transition-colors duration-700 ease-fluid hover:text-saffron">
+              <Icon name="instagram-logo" class="size-4" />
+              <span dir="ltr" class="inline-block">{d.visit.contact.instagramLabel}</span>
+            </a>
+          </li>
+          <li>
+            <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="t-small inline-flex items-center gap-2 transition-colors duration-700 ease-fluid hover:text-saffron">
+              <Icon name="whatsapp-logo" class="size-4" />
+              {d.visit.contact.whatsappLabel}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-4 border-t border-line pt-8 md:flex-row md:items-center md:justify-between">
+      <p class="t-small">{d.footer.copyright}</p>
+      <ul class="flex gap-6">
+        <li><a href={localePath(locale, 'privacy/')} class="t-small transition-colors duration-700 ease-fluid hover:text-saffron">{d.footer.privacy}</a></li>
+        <li><a href={localePath(locale, 'terms/')} class="t-small transition-colors duration-700 ease-fluid hover:text-saffron">{d.footer.terms}</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>

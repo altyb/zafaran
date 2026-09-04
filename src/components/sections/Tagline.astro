@@ -1,0 +1,29 @@
+---
+import { getDict } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+
+// Words are split for presentation only. The whole sentence is exposed to
+// assistive tech via aria-label on the <p>, and the spans are hidden from it,
+// so a screen reader reads continuous prose rather than disconnected words.
+const lines = d.tagline.lines.map((line) => line.split(' '));
+const full = d.tagline.lines.join(' ');
+---
+<section id="tagline" class="section-y">
+  <div class="container-page">
+    <p class="t-tagline max-w-4xl text-fg" data-tagline aria-label={full}>
+      {lines.map((words, li) => (
+        <span class="block" aria-hidden="true">
+          {words.map((word, wi) => (
+            <>
+              <span data-word>{word}</span>{wi < words.length - 1 ? ' ' : ''}
+            </>
+          ))}
+        </span>
+      ))}
+    </p>
+  </div>
+</section>

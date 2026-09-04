@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import { getDict, site, localePath } from '../lib/dict';
+import { DEFAULT_LOCALE } from '../lib/i18n';
+
+// A 404 is served for unknown paths, so it cannot know which language the
+// visitor wanted — there is no locale in the URL to read. It renders in the
+// default locale and offers both ways back.
+const locale = DEFAULT_LOCALE;
+const d = getDict(locale);
+const ar = getDict('ar');
+---
+<Base
+  locale={locale}
+  title={`${d.notFound.title} — ${d.common.brand}`}
+  description={d.notFound.body}
+  path=""
+  noindex
+>
+  <main id="main" class="relative isolate flex min-h-svh items-center overflow-hidden">
+    <Photo
+      id={site.notFoundPhotoId}
+      alt=""
+      ratio="3/4"
+      sizes="100vw"
+      priority
+      class="absolute inset-0 -z-10 size-full object-cover"
+    />
+    <div class="absolute inset-0 -z-10 bg-scrim"></div>
+
+    <div class="container-page">
+      <p class="t-eyebrow">{d.notFound.eyebrow}</p>
+      <h1 class="t-display mt-4 max-w-[680px] text-fg">{d.notFound.title}</h1>
+      <p class="t-lead mt-4 max-w-[680px] text-fg">{d.notFound.body}</p>
+      <div class="mt-8 flex flex-wrap gap-4">
+        <a href={localePath('en')} class="btn btn-primary btn-lg">{d.notFound.back}</a>
+        <a href={localePath('ar')} lang="ar" dir="rtl" class="btn btn-secondary btn-lg font-arabic">
+          {ar.notFound.back}
+        </a>
+      </div>
+    </div>
+  </main>
+</Base>

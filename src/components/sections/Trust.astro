@@ -1,0 +1,25 @@
+---
+import Icon from '../Icon.astro';
+import { getDict } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+---
+<section id="trust" class="border-y border-line bg-surface-deep py-12">
+  <div class="container-page">
+    <h2 class="sr-only">{d.trust.ratingLabel}</h2>
+    <ul class="grid grid-cols-2 gap-8 md:grid-cols-4">
+      {d.trust.items.map((item) => (
+        <li data-reveal>
+          <p class="t-price flex items-center gap-2 text-fg">
+            {item.icon === 'star' && <Icon name="star" class="size-5 text-saffron" />}
+            {item.value}
+          </p>
+          <p class="t-small mt-2">{item.label}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

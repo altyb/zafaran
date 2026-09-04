@@ -1,0 +1,48 @@
+---
+import Photo from '../Photo.astro';
+import Icon from '../Icon.astro';
+import { getDict, whatsappUrl } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+---
+<section id="hero" class="relative isolate flex min-h-svh items-end overflow-hidden">
+  <!-- LCP element: eager, high priority, full viewport width. -->
+  <Photo
+    id={d.hero.photo.id}
+    alt={d.hero.photo.alt}
+    ratio="16/9"
+    sizes="100vw"
+    priority
+    class="absolute inset-0 -z-10 size-full object-cover"
+  />
+  <!-- Flat scrim, never a gradient. -->
+  <div class="absolute inset-0 -z-10 bg-scrim"></div>
+
+  <div class="container-page pt-24 pb-16 md:pb-24">
+    <p class="t-eyebrow" data-reveal data-reveal-delay="0">{d.hero.eyebrow}</p>
+
+    <h1 class="t-display mt-4 max-w-[680px]">
+      {d.hero.lines.map((line, i) => (
+        <span class="block t-gradient" data-reveal data-reveal-delay={120 + i * 120}>{line}</span>
+      ))}
+    </h1>
+
+    <p class="t-lead mt-4 max-w-[680px] text-fg md:mt-6" data-reveal data-reveal-delay="360">
+      {d.hero.lead}
+    </p>
+
+    <div class="mt-8 flex flex-wrap gap-4" data-reveal data-reveal-delay="480">
+      <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+        {d.hero.primary}
+        <Icon name="whatsapp-logo" class="size-5" />
+      </a>
+      <a href="#menu" class="btn btn-secondary btn-lg">
+        {d.hero.secondary}
+        <Icon name="arrow-right" class="size-5" mirror />
+      </a>
+    </div>
+  </div>
+</section>
