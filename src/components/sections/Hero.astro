@@ -1,73 +1,71 @@
 ---
 import Photo from '../Photo.astro';
 import Icon from '../Icon.astro';
-import { getDict, whatsappUrl, formatPrice } from '../../lib/dict';
+import { getDict } from '../../lib/dict';
 import type { Locale } from '../../lib/i18n';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const d = getDict(locale);
-const dish = d.menu.dishes[0];
+const [rating, press] = d.trust.items;
 ---
-<section id="hero" class="p-2 md:p-3">
-  <!-- One rounded window; the corner bite holds a dish from the menu. The
-       window corner under the bite is square so no hairline shows there. -->
-  <div class="window flex min-h-[calc(100svh-1rem)] items-end rounded-ee-none md:min-h-[calc(100svh-1.5rem)]">
-    <!-- LCP element: eager, high priority, full viewport width. -->
-    <Photo
-      id={d.hero.photo.id}
-      alt={d.hero.photo.alt}
-      ratio="16/9"
-      sizes="100vw"
-      priority
-      class="absolute inset-0 -z-20 size-full object-cover"
-    />
-    <div class="veil"></div>
+<section id="hero" class="pt-20 md:pt-24">
+  <div class="container-page">
+    <!-- The name set edge to edge, like the top of a printed menu. -->
+    <h1 class="sr-only">{d.common.brand} — {d.hero.title}</h1>
+    <!-- Latin: each letter rises in turn. Arabic letters must stay joined,
+         so the word rises as one. -->
+    <p class="wordmark overflow-hidden text-center text-fg" aria-hidden="true">
+      {locale === 'ar'
+        ? <span class="rise inline-block">{d.common.brand}</span>
+        : [...d.common.brand].map((ch, i) => <span class="rise inline-block" style={`--i:${i}`}>{ch}</span>)}
+    </p>
 
-    <div class="w-full px-5 pt-28 pb-28 md:px-10 md:pb-12 md:pe-[22rem]">
-      <p class="t-eyebrow" data-reveal data-reveal-delay="0">{d.hero.eyebrow}</p>
+  </div>
 
-      <h1 class="t-display mt-4 max-w-[680px]">
-        {d.hero.lines.map((line, i) => (
-          <span class="block t-gradient" data-reveal data-reveal-delay={120 + i * 120}>{line}</span>
-        ))}
-      </h1>
+  <!-- Photo strip, then the intro. -->
+  <div class="relative mt-8 md:mt-10">
+    <!-- Three photos: the room, the plate (largest, the LCP), the pass.
+         Desktop shows them side by side; a phone swipes between them. -->
+    <div class="rail hero-rail px-3 md:grid md:grid-cols-[1fr_2.4fr_1fr] md:gap-3 md:overflow-visible md:px-8">
+      <figure class="wipe w-[78%] md:mt-16 md:w-auto" style="--d:500ms">
+        <div class="zoom h-full overflow-hidden rounded-[0.5rem]">
+          <Photo id={d.story.photos[0].id} alt={d.story.photos[0].alt} ratio="3/4" sizes="(min-width: 768px) 20vw, 78vw" priority class="aspect-[4/5] size-full object-cover md:aspect-auto" />
+        </div>
+      </figure>
+      <figure class="wipe order-first w-[88%] md:order-none md:w-auto" style="--d:250ms">
+        <div class="zoom overflow-hidden rounded-[0.5rem]">
+          <!-- LCP element: eager, high priority. -->
+          <Photo id={d.hero.photo.id} alt={d.hero.photo.alt} ratio="4/3" sizes="(min-width: 768px) 55vw, 88vw" priority class="aspect-[4/5] w-full object-cover md:aspect-[4/3]" />
+        </div>
+      </figure>
+      <figure class="wipe w-[78%] md:mb-16 md:w-auto" style="--d:650ms">
+        <div class="zoom h-full overflow-hidden rounded-[0.5rem]">
+          <Photo id={d.story.photos[1].id} alt={d.story.photos[1].alt} ratio="3/4" sizes="(min-width: 768px) 20vw, 78vw" class="aspect-[4/5] size-full object-cover md:aspect-auto" />
+        </div>
+      </figure>
+    </div>
 
-      <p class="t-lead mt-4 max-w-[560px] text-fg/85 md:mt-6" data-reveal data-reveal-delay="360">
-        {d.hero.lead}
+    <div class="container-page"><div class="double-rule mt-6 grid gap-6 pt-6 md:mt-10 md:grid-cols-[1fr_1.2fr_auto] md:items-start md:gap-10">
+      <p class="t-eyebrow" data-reveal>{d.hero.eyebrow}</p>
+      <p class="t-lead text-fg" data-reveal>
+        <span class="t-em">{d.hero.lines[0]}</span> {d.hero.lines[1]} <span class="text-fg-muted">{d.hero.lead}</span>
       </p>
-
-      <div class="mt-8 flex flex-wrap gap-3" data-reveal data-reveal-delay="480">
-        <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-          {d.hero.primary}
-          <Icon name="whatsapp-logo" class="size-5" />
-        </a>
-        <a href="#menu" class="btn btn-secondary btn-lg bg-white/10 backdrop-blur-md">
+      <div class="flex flex-wrap gap-3 md:flex-col md:items-end" data-reveal>
+        <a href="#reserve" class="btn btn-primary btn-lg">{d.common.reserve}</a>
+        <a href="#menu" class="btn btn-secondary btn-lg">
           {d.hero.secondary}
+          <Icon name="arrow-right" class="size-5" mirror />
         </a>
       </div>
     </div>
-
-    <!-- Phone: a round arrow in the bite. Desktop: a dish card. -->
-    <a href="#menu" aria-label={d.hero.secondary} class="bite bite-be p-2.5 md:hidden">
-      <span class="flex size-14 items-center justify-center rounded-full bg-saffron text-ink">
-        <Icon name="caret-down" class="size-6" />
-      </span>
-    </a>
-    <a href="#menu" class="bite bite-be group hidden w-[20rem] p-3 md:block" data-reveal data-reveal-delay="600">
-      <span class="flex items-center gap-3 rounded-[1.25rem] bg-surface p-2 pe-4 transition-colors duration-700 ease-fluid group-hover:bg-surface-raised">
-        <span class="size-20 shrink-0 overflow-hidden rounded-[0.9rem]">
-          <Photo id={dish.photo.id} alt="" ratio="4/3" sizes="80px" class="size-full object-cover" />
-        </span>
-        <span class="min-w-0 flex-1">
-          <span class="t-eyebrow block">{d.menu.eyebrow}</span>
-          <span class="t-body mt-1 block truncate font-semibold text-fg">{dish.name}</span>
-          <span class="t-price mt-1 block text-saffron">{formatPrice(locale, dish.price)}</span>
-        </span>
-        <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-saffron text-ink transition-transform duration-700 ease-fluid group-hover:-rotate-45 rtl:group-hover:rotate-45">
-          <Icon name="arrow-right" class="size-4" mirror />
-        </span>
-      </span>
-    </a>
+    </div>
+    <div class="container-page mt-4 flex flex-wrap items-center justify-between gap-x-8 gap-y-2">
+      <p class="t-small inline-flex items-center gap-2 text-fg">
+        <Icon name="star" class="size-4 text-saffron-deep" />
+        <strong class="tabular-nums">{rating.value}</strong> {rating.label}
+      </p>
+      <p class="t-small font-serif italic rtl:font-serif-ar rtl:not-italic">{press.value} — {press.label}</p>
+    </div>
   </div>
 </section>

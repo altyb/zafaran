@@ -33,77 +33,39 @@ function reveal() {
   els.forEach((el) => io.observe(el));
 }
 
-/**
- * 2. Tagline word light-up (B11). Words are lit in DOM order, which is reading
- * order in both ltr and rtl — so Arabic sequences right-to-left with no extra
- * code. Reversible when the user scrolls back up.
- */
-function tagline() {
-  const words = document.querySelectorAll<HTMLElement>('[data-tagline] [data-word]');
-  if (!words.length) return;
-  if (reduced) {
-    words.forEach((w) => w.classList.add('is-lit'));
-    return;
-  }
-  const io = new IntersectionObserver(
-    (entries) => {
-      let k = 0;
-      for (const entry of entries) {
-        const el = entry.target as HTMLElement;
-        if (entry.isIntersecting) {
-          el.style.transitionDelay = `${k++ * 90}ms`;
-          el.classList.add('is-lit');
-        } else if (entry.boundingClientRect.top > 0) {
-          // Dropped back below the trigger line — the user scrolled up.
-          el.style.transitionDelay = '0ms';
-          el.classList.remove('is-lit');
-        }
-        // Left above the viewport: stay lit.
-      }
-    },
-    { threshold: 0, rootMargin: '0px 0px -45% 0px' },
-  );
-  words.forEach((w) => io.observe(w));
-}
-
-/** 3. Sticky mobile booking bar, shown once the hero has scrolled away. */
-function stickyCta() {
+/** 3. Masthead turns to glass after the top; phone dock shows once the hero is gone. */
+function chrome() {
   const hero = document.getElementById('hero');
-  const bar = document.getElementById('sticky-cta');
-  if (!hero || !bar) return;
+  const head = document.getElementById('masthead');
+  const dock = document.getElementById('dock');
+  if (!hero) return;
   new IntersectionObserver(
-    ([entry]) => bar.classList.toggle('is-visible', !entry.isIntersecting),
-    { threshold: 0 },
+    ([e]) => {
+      head?.classList.toggle('is-scrolled', e.boundingClientRect.top < -40);
+      dock?.classList.toggle('is-visible', !e.isIntersecting);
+    },
+    { threshold: [0, 0.98] },
   ).observe(hero);
 }
 
-/** 4. Mobile menu: hamburger morph, overlay, staggered links, focus handling. */
-function mobileMenu() {
-  const toggle = document.getElementById('nav-toggle');
-  const overlay = document.getElementById('nav-overlay');
-  if (!toggle || !overlay) return;
-
-  const setOpen = (open: boolean) => {
-    toggle.setAttribute('aria-expanded', String(open));
-    overlay.classList.toggle('is-open', open);
-    // Stop the page scrolling behind a full-screen overlay.
-    document.documentElement.style.overflow = open ? 'hidden' : '';
-    if (open) overlay.querySelector<HTMLElement>('a')?.focus();
-    else toggle.focus();
-  };
-
-  toggle.addEventListener('click', () =>
-    setOpen(toggle.getAttribute('aria-expanded') !== 'true'),
+/** 4. Timetable: the step crossing the middle of the screen lights up. */
+function dayNow() {
+  const steps = document.querySelectorAll<HTMLElement>('.day-step');
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.target.classList.toggle('is-now', e.isIntersecting)),
+    { rootMargin: '-45% 0px -45% 0px' },
   );
-  overlay.querySelectorAll('a').forEach((a) =>
-    a.addEventListener('click', () => setOpen(false)),
-  );
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') setOpen(false);
-  });
+  steps.forEach((s) => io.observe(s));
 }
 
+/** 5. Fade images in once they have loaded. */
+function images() {
+  const done = (img: HTMLImageElement) => img.classList.add('is-loaded');
+  document.addEventListener('load', (e) => e.target instanceof HTMLImageElement && done(e.target), true);
+  document.querySelectorAll('img').forEach((img) => img.complete && img.naturalWidth && done(img));
+}
+
+images();
 reveal();
-tagline();
-stickyCta();
-mobileMenu();
+chrome();
+dayNow();

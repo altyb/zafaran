@@ -7,89 +7,48 @@ interface Props { locale: Locale }
 const { locale } = Astro.props;
 const d = getDict(locale);
 const v = d.visit;
-// Each card's icon sits in a bite cut from its top corner.
-const card = 'relative rounded-[1.75rem] rounded-se-none bg-surface p-6 pt-20';
-const badge = 'bite bite-te p-2 [--r:1rem]';
-const dot = 'flex size-11 items-center justify-center rounded-full bg-saffron text-ink';
-const link = 'inline-flex items-center gap-2 transition-colors duration-700 ease-fluid hover:text-saffron';
+const link = 'inline-flex items-center gap-2 transition-colors duration-300 hover:text-saffron-deep';
 ---
+<!-- Three ruled columns, like the back page of a printed menu. -->
 <section id="visit" class="section-y">
   <div class="container-page">
-    <div data-reveal>
-      <p class="t-eyebrow">{v.eyebrow}</p>
-      <h2 class="t-h2 mt-2 text-fg">{v.title}</h2>
-    </div>
+    <p class="t-eyebrow" data-reveal>{v.eyebrow}</p>
+    <h2 class="t-h2 mt-3 text-fg" data-reveal>{v.title}</h2>
 
-    <div class="mt-8 grid gap-3 sm:grid-cols-2 md:mt-12 lg:grid-cols-4">
-      <div class={card} data-reveal>
-        <span class={badge}><span class={dot}><Icon name="clock" class="size-5" /></span></span>
-        <h3 class="t-h3 text-fg">{v.hours.title}</h3>
-        <dl class="mt-4 space-y-2">
+    <div class="double-rule mt-10 grid md:grid-cols-3">
+      <div class="border-b rule py-8 md:border-b-0 md:pe-10" data-reveal>
+        <h3 class="t-eyebrow">{v.hours.title}</h3>
+        <dl class="mt-4 space-y-3">
           {v.hours.rows.map((row) => (
             <div>
               <dt class="t-small">{row.days}</dt>
-              <dd class="t-body text-fg tabular-nums">
-                <span dir="ltr" class="inline-block">{row.time}</span>
-              </dd>
+              <dd class="font-serif text-3xl tabular-nums text-fg"><span dir="ltr" class="inline-block">{row.time}</span></dd>
             </div>
           ))}
         </dl>
         <p class="t-small mt-4">{v.hours.note}</p>
       </div>
 
-      <div class={card} data-reveal>
-        <span class={badge}><span class={dot}><Icon name="map-pin" class="size-5" /></span></span>
-        <h3 class="t-h3 text-fg">{v.address.title}</h3>
-        <address class="t-body mt-4">
+      <div class="border-b rule py-8 md:border-x md:border-b-0 md:px-10" data-reveal>
+        <h3 class="t-eyebrow">{v.address.title}</h3>
+        <address class="mt-4 font-serif text-2xl leading-snug text-fg rtl:font-serif-ar">
           {v.address.lines.map((l) => <span class="block">{l}</span>)}
         </address>
-        <div class="mt-4 flex flex-wrap gap-2">
-          <a href={site.mapsGoogle} target="_blank" rel="noopener" class={`t-small rounded-full bg-white/5 px-3 py-1.5 ${link}`}>
-            {v.address.google}
-            <Icon name="arrow-up-right" class="size-4" mirror />
-          </a>
-          <a href={site.mapsApple} target="_blank" rel="noopener" class={`t-small rounded-full bg-white/5 px-3 py-1.5 ${link}`}>
-            {v.address.apple}
-            <Icon name="arrow-up-right" class="size-4" mirror />
-          </a>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <a href={site.mapsGoogle} target="_blank" rel="noopener" class="press t-small rounded-full border border-fg/20 px-3.5 py-2 text-fg">{v.address.google}</a>
+          <a href={site.mapsApple} target="_blank" rel="noopener" class="press t-small rounded-full border border-fg/20 px-3.5 py-2 text-fg">{v.address.apple}</a>
         </div>
+        <p class="t-small mt-5"><strong class="text-fg">{v.parking.title}.</strong> {v.parking.body}</p>
       </div>
 
-      <div class={card} data-reveal>
-        <span class={badge}><span class={dot}><Icon name="phone" class="size-5" /></span></span>
-        <h3 class="t-h3 text-fg">{v.contact.title}</h3>
+      <div class="py-8 md:ps-10" data-reveal>
+        <h3 class="t-eyebrow">{v.contact.title}</h3>
+        <a href={`tel:${site.phoneE164}`} class="mt-4 block font-serif text-3xl text-fg italic hover:text-saffron-deep" dir="ltr">{v.contact.phoneLabel}</a>
         <ul class="mt-4 space-y-3">
-          <li>
-            <a href={`tel:${site.phoneE164}`} class={`t-small ${link}`}>
-              <Icon name="phone" class="size-4" />
-              <span dir="ltr" class="inline-block">{v.contact.phoneLabel}</span>
-            </a>
-          </li>
-          <li>
-            <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class={`t-small ${link}`}>
-              <Icon name="whatsapp-logo" class="size-4" />
-              {v.contact.whatsappLabel}
-            </a>
-          </li>
-          <li>
-            <a href={`mailto:${site.email}`} class={`t-small ${link}`}>
-              <Icon name="envelope-simple" class="size-4" />
-              <span dir="ltr" class="inline-block">{v.contact.emailLabel}</span>
-            </a>
-          </li>
-          <li>
-            <a href={site.instagramUrl} target="_blank" rel="noopener" class={`t-small ${link}`}>
-              <Icon name="instagram-logo" class="size-4" />
-              <span dir="ltr" class="inline-block">{v.contact.instagramLabel}</span>
-            </a>
-          </li>
+          <li><a href={whatsappUrl(locale)} target="_blank" rel="noopener" class={`t-small ${link}`}><Icon name="whatsapp-logo" class="size-4" />{v.contact.whatsappLabel}</a></li>
+          <li><a href={`mailto:${site.email}`} class={`t-small ${link}`}><Icon name="envelope-simple" class="size-4" /><span dir="ltr">{v.contact.emailLabel}</span></a></li>
+          <li><a href={site.instagramUrl} target="_blank" rel="noopener" class={`t-small ${link}`}><Icon name="instagram-logo" class="size-4" /><span dir="ltr">{v.contact.instagramLabel}</span></a></li>
         </ul>
-      </div>
-
-      <div class={card} data-reveal>
-        <span class={badge}><span class={dot}><Icon name="car" class="size-5" /></span></span>
-        <h3 class="t-h3 text-fg">{v.parking.title}</h3>
-        <p class="t-small mt-4">{v.parking.body}</p>
       </div>
     </div>
   </div>

@@ -1,0 +1,101 @@
+---
+import Icon from '../Icon.astro';
+import { getDict, site, whatsappUrl } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+const r = d.reserve;
+const sizes = [1, 2, 3, 4, 5, 6, 7, 8];
+---
+<!-- A booking slip: pick guests, day and time, and the WhatsApp message is
+     written for you. Without JS the button still opens a plain booking chat. -->
+<section id="reserve" class="section-y">
+  <div class="container-page">
+    <form
+      id="slip"
+      class="slip relative mx-auto max-w-3xl rounded-[0.75rem] bg-surface px-5 pt-10 pb-8 md:px-12 md:pt-14 md:pb-12"
+      data-message={r.message}
+      data-number={site.whatsappNumber}
+      data-reveal
+    >
+      <div class="text-center">
+        <p class="t-eyebrow">{r.eyebrow}</p>
+        <h2 class="t-h2 mt-3 text-fg">{r.title}</h2>
+      </div>
+
+      <fieldset class="mt-10 min-w-0">
+        <legend class="t-small font-semibold text-fg">{r.party}</legend>
+        <div class="rail mt-3 -mx-5 px-5 md:mx-0 md:flex-wrap md:px-0">
+          {sizes.map((n) => (
+            <label class="chip tabular-nums"><input type="radio" name="n" value={n} checked={n === 2} />{n}</label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-7 min-w-0">
+        <legend class="t-small font-semibold text-fg">{r.when}</legend>
+        <div class="rail mt-3 -mx-5 px-5 md:mx-0 md:flex-wrap md:px-0">
+          {r.days.map((day, i) => (
+            <label class="chip"><input type="radio" name="day" value={day} checked={i === 0} />{day}</label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-7 min-w-0">
+        <legend class="t-small font-semibold text-fg">{r.time}</legend>
+        <div class="rail mt-3 -mx-5 px-5 md:mx-0 md:flex-wrap md:px-0">
+          {r.times.map((t, i) => (
+            <label class="chip tabular-nums" dir="ltr"><input type="radio" name="time" value={t} checked={i === 3} />{t}</label>
+          ))}
+        </div>
+      </fieldset>
+
+      <!-- Perforation: the tear line between the choices and the stub. -->
+      <div class="perf relative -mx-5 my-9 border-t-2 border-dashed border-fg/20 md:-mx-12" aria-hidden="true"></div>
+
+      <p id="slip-preview" class="font-serif text-xl italic text-fg md:text-2xl rtl:font-serif-ar rtl:not-italic" aria-live="polite"></p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a id="slip-send" href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg flex-1 sm:flex-none">
+          {r.send}
+          <Icon name="whatsapp-logo" class="size-5" />
+        </a>
+        <a href={`tel:${site.phoneE164}`} class="btn btn-secondary btn-lg" aria-label={d.common.call}>
+          <Icon name="phone" class="size-5" />
+          <span dir="ltr" class="hidden sm:inline">{site.phoneDisplay}</span>
+        </a>
+      </div>
+      <p class="t-small mt-6">{r.note}</p>
+    </form>
+  </div>
+</section>
+
+<style>
+  /* Half-circle bites at both ends of the tear line, in the page colour. */
+  .perf::before, .perf::after {
+    content: ""; position: absolute; top: -13px; width: 24px; height: 24px; border-radius: 999px; background: var(--color-page);
+  }
+  .perf::before { left: -12px; }
+  .perf::after { right: -12px; }
+</style>
+
+<script>
+  const slip = document.getElementById('slip') as HTMLFormElement | null;
+  if (slip) {
+    const send = document.getElementById('slip-send') as HTMLAnchorElement;
+    const preview = document.getElementById('slip-preview')!;
+    const update = () => {
+      const f = new FormData(slip);
+      const text = slip.dataset.message!
+        .replace('{n}', String(f.get('n')))
+        .replace('{day}', String(f.get('day')).toLowerCase())
+        .replace('{time}', String(f.get('time')));
+      preview.textContent = `“${text}”`;
+      send.href = `https://wa.me/${slip.dataset.number}?text=${encodeURIComponent(text)}`;
+    };
+    slip.addEventListener('change', update);
+    slip.addEventListener('submit', (e) => e.preventDefault());
+    update();
+  }
+</script>

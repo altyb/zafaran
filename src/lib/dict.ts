@@ -3,7 +3,9 @@ export type { Locale };
 
 export interface Photo { id: string; alt: string }
 export interface Link { label: string; href: string }
-export interface Dish { name: string; desc: string; price: number; photo: Photo }
+export interface Dish { name: string; desc: string; price: number; photo?: Photo; mark?: string }
+export interface MenuSection { title: string; note?: string; items: Dish[] }
+export interface DayStep { time: string; title: string; body: string }
 export interface HoursRow { days: string; time: string }
 export interface Faq { q: string; a: string }
 export interface LegalPage { title: string; paragraphs: string[] }
@@ -19,9 +21,17 @@ export interface Dictionary {
   };
   nav: { links: Link[] };                       // exactly 3, hrefs '#menu' '#visit' '#faq'
   hero: Header & { lines: string[]; lead: string; primary: string; secondary: string; photo: Photo };
-  trust: { ratingLabel: string; items: { value: string; label: string; icon?: string }[] }; // exactly 4
+  trust: { ratingLabel: string; items: { value: string; label: string; icon?: string }[] };
   story: Header & { paragraphs: string[]; caption: string; photos: [Photo, Photo] };
-  menu: Header & { dishes: Dish[]; note: string };   // exactly 6
+  menu: Header & { sections: MenuSection[]; note: string; tapHint: string };
+  day: Header & { steps: DayStep[] };
+  spices: string[];
+  reserve: Header & {
+    party: string; when: string; days: string[]; time: string; times: string[];
+    send: string; note: string;
+    /** {n} guests, {day}, {time} are filled in. */
+    message: string;
+  };
   tagline: { lines: string[] };                       // exactly 3
   visit: Header & {
     hours: { title: string; rows: HoursRow[]; note: string };
@@ -29,7 +39,7 @@ export interface Dictionary {
     contact: { title: string; phoneLabel: string; whatsappLabel: string; emailLabel: string; instagramLabel: string };
     parking: { title: string; body: string };
   };
-  faq: Header & { items: Faq[] };                     // exactly 9
+  faq: Header & { items: Faq[] };
   cta: Header & { lead: string; primary: string; secondary: string; fallback: string; photo: Photo };
   footer: { blurb: string; explore: string; contact: string; hours: string; privacy: string; terms: string; copyright: string };
   legal: { privacy: LegalPage; terms: LegalPage };

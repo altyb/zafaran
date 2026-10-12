@@ -1,5 +1,5 @@
 ---
-import Icon from './Icon.astro';
+import Logo from './Logo.astro';
 import { getDict, whatsappUrl, localePath } from '../lib/dict';
 import { LOCALE_META, otherLocale, type Locale } from '../lib/i18n';
 
@@ -13,118 +13,39 @@ const otherMeta = LOCALE_META[other];
 // lang/dir and the matching family.
 const otherFontClass = other === 'ar' ? 'font-arabic' : 'font-sans';
 ---
-<header class="fixed inset-x-0 top-0 z-50 pointer-events-none">
-  <nav
-    aria-label={d.common.mainNav}
-    class="pointer-events-auto mt-6 mx-auto w-max max-w-[calc(100%-2rem)] rounded-full border border-line bg-glass p-2 backdrop-blur-xl"
-  >
-    <div class="flex items-center gap-2">
-      <a
-        href={localePath(locale)}
-        aria-current="page"
-        class="t-wordmark rounded-full px-4 py-2 text-fg transition-colors duration-700 ease-fluid hover:text-saffron"
-      >{d.common.brand}</a>
+<!-- Masthead: links on the start side, the name in the middle, language and
+     booking on the end side, a rule underneath. Turns to paper glass once
+     the page scrolls (the script toggles .is-scrolled). -->
+<header id="masthead" class="fixed inset-x-0 top-0 z-50 transition-colors duration-500">
+  <nav aria-label={d.common.mainNav} class="container-page grid h-16 grid-cols-[1fr_auto_1fr] items-center gap-3 md:h-20">
+    <ul class="hidden items-center gap-6 md:flex">
+      {d.nav.links.map((link) => (
+        <li><a href={link.href} class="t-nav text-fg-muted transition-colors duration-300 hover:text-fg">{link.label}</a></li>
+      ))}
+    </ul>
+    <a
+      href={localePath(other)}
+      lang={other}
+      dir={otherMeta.dir}
+      class:list={['t-nav press justify-self-start text-fg underline decoration-fg/30 underline-offset-4 md:hidden', otherFontClass]}
+    >{otherMeta.label}</a>
 
-      <ul class="hidden items-center gap-2 md:flex">
-        {d.nav.links.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class="t-nav block rounded-full px-4 py-2 text-fg-muted transition-colors duration-700 ease-fluid hover:text-fg"
-            >{link.label}</a>
-          </li>
-        ))}
-      </ul>
+    <a href={localePath(locale)} aria-current="page" class="press text-fg"><Logo class="h-9 md:h-11" label={d.common.brand} /></a>
 
+    <div class="flex items-center justify-self-end gap-5">
       <a
         href={localePath(other)}
         lang={other}
         dir={otherMeta.dir}
-        class:list={['t-nav rounded-full border border-line px-4 py-2 text-fg-muted transition-colors duration-700 ease-fluid hover:border-saffron hover:text-saffron', otherFontClass]}
+        class:list={['t-nav hidden text-fg-muted transition-colors duration-300 hover:text-fg md:inline', otherFontClass]}
       >{otherMeta.label}</a>
-
-      <a
-        href={whatsappUrl(locale)}
-        target="_blank"
-        rel="noopener"
-        class="btn btn-primary hidden md:inline-flex"
-      >{d.common.reserveShort}</a>
-
-      <button
-        id="nav-toggle"
-        type="button"
-        aria-expanded="false"
-        aria-controls="nav-overlay"
-        aria-label={d.common.openMenu}
-        class="relative size-10 shrink-0 rounded-full border border-line text-fg md:hidden"
-      >
-        <span class="nav-bar nav-bar-1"></span>
-        <span class="nav-bar nav-bar-2"></span>
-      </button>
+      <a href="#reserve" class="press rounded-full bg-fg px-4 py-2.5 text-sm font-semibold text-page md:px-5">{d.common.reserveShort}</a>
     </div>
   </nav>
+  <div class="masthead-rule container-page"><div class="border-b rule"></div></div>
 </header>
 
-<div
-  id="nav-overlay"
-  class="fixed inset-0 z-40 bg-black/80 backdrop-blur-3xl md:hidden"
-  aria-label={d.common.mainNav}
->
-  <ul class="flex h-full flex-col items-start justify-center gap-8 px-8">
-    {d.nav.links.map((link, i) => (
-      <li class="nav-item" style={`--i:${i}`}>
-        <a href={link.href} class="t-h2 text-fg">{link.label}</a>
-      </li>
-    ))}
-    <li class="nav-item" style={`--i:${d.nav.links.length}`}>
-      <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-        {d.common.reserve}
-        <Icon name="whatsapp-logo" class="size-5" />
-      </a>
-    </li>
-  </ul>
-</div>
-
 <style>
-  /* Hamburger: two bars that morph into an X. They rotate through centre —
-     they never simply disappear. */
-  .nav-bar {
-    position: absolute;
-    inset-inline-start: 50%;
-    top: 50%;
-    width: 18px;
-    height: 2px;
-    margin-inline-start: -9px;
-    background: currentColor;
-    border-radius: 2px;
-    transition: translate var(--dur-fast) var(--ease-fluid),
-                rotate var(--dur-fast) var(--ease-fluid);
-  }
-  .nav-bar-1 { translate: 0 -4px; }
-  .nav-bar-2 { translate: 0 4px; }
-
-  #nav-toggle[aria-expanded='true'] .nav-bar-1 { translate: 0 0; rotate: 45deg; }
-  #nav-toggle[aria-expanded='true'] .nav-bar-2 { translate: 0 0; rotate: -45deg; }
-
-  /* Overlay: hidden until the script opens it. */
-  #nav-overlay {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--dur-fast) var(--ease-fluid),
-                visibility var(--dur-fast) var(--ease-fluid);
-  }
-  #nav-overlay.is-open { opacity: 1; visibility: visible; }
-
-  .nav-item {
-    translate: 0 3rem;
-    opacity: 0;
-    transition: translate var(--dur-fast) var(--ease-fluid),
-                opacity var(--dur-fast) var(--ease-fluid);
-    transition-delay: calc(var(--i) * 80ms);
-  }
-  #nav-overlay.is-open .nav-item { translate: 0 0; opacity: 1; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-item { translate: 0 0; transition: opacity var(--dur-fast) var(--ease-fluid); }
-  }
+  #masthead.is-scrolled { background: var(--color-glass); backdrop-filter: blur(14px); }
+  #masthead.is-scrolled .masthead-rule { opacity: 0; }
 </style>

@@ -42,6 +42,8 @@ const canonical = `${SITE_URL}/${locale}/${path}`;
 
     <Font cssVariable="--font-manrope" preload={locale === 'en'} />
     <Font cssVariable="--font-readex" preload={locale === 'ar'} />
+    <Font cssVariable="--font-fraunces" preload={locale === 'en'} />
+    <Font cssVariable="--font-messiri" preload={locale === 'ar'} />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -53,7 +55,7 @@ const canonical = `${SITE_URL}/${locale}/${path}`;
     <link rel="alternate" hreflang="x-default" href={`${SITE_URL}/`} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#131209" />
+    <meta name="theme-color" content="#F4ECDF" />
     <link rel="preconnect" href="https://images.unsplash.com" />
 
     <meta property="og:type" content="website" />
@@ -68,7 +70,7 @@ const canonical = `${SITE_URL}/${locale}/${path}`;
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
 
-  <body class="bg-ink min-h-svh">
+  <body class="bg-page min-h-svh">
     <a href="#main" class="skip-link t-button">
       {locale === 'ar' ? 'تخطَّ إلى المحتوى' : 'Skip to content'}
     </a>

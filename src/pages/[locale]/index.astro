@@ -2,15 +2,15 @@
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
-import StickyCta from '../../components/StickyCta.astro';
 import Hero from '../../components/sections/Hero.astro';
-import Trust from '../../components/sections/Trust.astro';
+import Spices from '../../components/sections/Spices.astro';
 import Story from '../../components/sections/Story.astro';
+import Day from '../../components/sections/Day.astro';
 import Menu from '../../components/sections/Menu.astro';
-import Tagline from '../../components/sections/Tagline.astro';
+import Reserve from '../../components/sections/Reserve.astro';
 import Visit from '../../components/sections/Visit.astro';
 import Faq from '../../components/sections/Faq.astro';
-import Cta from '../../components/sections/Cta.astro';
+import Dock from '../../components/Dock.astro';
 import { getDict, site } from '../../lib/dict';
 import type { Locale } from '../../lib/i18n';
 
@@ -41,16 +41,16 @@ const jsonLd = {
 ---
 <Base locale={locale} title={d.meta.title} description={d.meta.description} path="" jsonLd={jsonLd}>
   <Nav locale={locale} />
-  <main id="main" class="flex flex-col gap-3">
+  <main id="main">
     <Hero locale={locale} />
-    <Trust locale={locale} />
+    <Spices locale={locale} />
     <Story locale={locale} />
+    <Day locale={locale} />
     <Menu locale={locale} />
-    <Tagline locale={locale} />
+    <Reserve locale={locale} />
     <Visit locale={locale} />
     <Faq locale={locale} />
-    <Cta locale={locale} />
   </main>
   <Footer locale={locale} />
-  <StickyCta locale={locale} />
+  <Dock locale={locale} />
 </Base>

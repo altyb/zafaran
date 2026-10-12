@@ -1,0 +1,10 @@
+---
+/** The Zafaran mark: the arch of a wood-fired oven with a
+ *  saffron flame inside. Drawn once in /mark.svg and referenced. The arch
+ *  follows currentColor; the flame uses --thread (saffron red by default). */
+interface Props { class?: string; label?: string }
+const { class: className = 'h-8', label } = Astro.props;
+---
+<svg viewBox="0 0 64 64" class={className} role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'}>
+  <use href="/mark.svg#mark" />
+</svg>

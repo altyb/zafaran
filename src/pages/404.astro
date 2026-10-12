@@ -31,11 +31,11 @@ const ar = getDict('ar');
 
     <div class="container-page">
       <p class="t-eyebrow">{d.notFound.eyebrow}</p>
-      <h1 class="t-display mt-4 max-w-[680px] text-fg">{d.notFound.title}</h1>
-      <p class="t-lead mt-4 max-w-[680px] text-fg">{d.notFound.body}</p>
+      <h1 class="t-display mt-4 max-w-[680px] text-white">{d.notFound.title}</h1>
+      <p class="t-lead mt-4 max-w-[680px] text-white/85">{d.notFound.body}</p>
       <div class="mt-8 flex flex-wrap gap-4">
         <a href={localePath('en')} class="btn btn-primary btn-lg">{d.notFound.back}</a>
-        <a href={localePath('ar')} lang="ar" dir="rtl" class="btn btn-secondary btn-lg font-arabic">
+        <a href={localePath('ar')} lang="ar" dir="rtl" class="btn btn-ghost-light btn-lg font-arabic">
           {ar.notFound.back}
         </a>
       </div>

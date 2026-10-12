@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import { getDict, site } from '../lib/dict';
+import type { Locale } from '../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+---
+<!-- Phone-only thumb dock, shown once the hero has scrolled away: menu, call,
+     and the booking slip — the three things people open a restaurant site for. -->
+<nav id="dock" aria-label={d.common.mainNav} class="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 md:hidden">
+  <div class="flex w-full max-w-sm items-center gap-1.5 rounded-full bg-fg p-1.5 shadow-[0_16px_40px_-12px_rgb(30_23_16/0.55)]">
+    <a href="#menu" class="press flex-1 rounded-full py-3 text-center text-sm font-semibold text-page">{d.nav.links[0].label}</a>
+    <a href={`tel:${site.phoneE164}`} aria-label={d.common.call} class="press flex size-11 items-center justify-center rounded-full bg-page/10 text-page">
+      <Icon name="phone" class="size-5" />
+    </a>
+    <a href="#reserve" class="press flex-[1.4] rounded-full bg-saffron py-3 text-center text-sm font-semibold text-ink">{d.common.reserve}</a>
+  </div>
+</nav>
+
+<style>
+  #dock { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); translate: 0 140%; transition: translate 500ms var(--ease-spring); }
+  #dock.is-visible { translate: 0 0; }
+  @media (prefers-reduced-motion: reduce) { #dock { transition: none; } }
+</style>

@@ -1,19 +1,25 @@
 @import "tailwindcss";
 
+/* A printed bill of fare: cream paper, roasted-brown ink, one saffron red
+   for accents, and thin ruled lines as the structure (no cards). */
 @theme {
-  --color-ink: #131209;
-  --color-surface: #1F1F1F;
-  --color-surface-raised: #272727;
-  --color-surface-deep: #181818;
-  --color-line: #313131;
-  --color-saffron: #E9A83B;
-  --color-saffron-hover: #F3BE5E;
-  --color-fg: #FFFFFF;
-  --color-fg-muted: #9B9B9B;
-  --color-scrim: rgba(0, 0, 0, 0.5);
-  --color-glass: rgba(19, 18, 9, 0.72);
+  --color-page: #F4ECDF;
+  --color-surface: #EADFCB;
+  --color-surface-raised: #E2D3BA;
+  --color-line: #D6C6AB;
+  --color-ink: #1E1710;
+  --color-ink-soft: #2B2219;
+  --color-saffron: #E0962A;
+  --color-saffron-hover: #EBA846;
+  --color-saffron-deep: #A93A12;
+  --color-fg: #1E1710;
+  --color-fg-muted: #6B5E4F;
+  --color-cream: #F4ECDF;
+  --color-scrim: rgba(0, 0, 0, 0.45);
+  --color-glass: rgba(244, 236, 223, 0.82);
   --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
-  --dur-fast: 700ms;
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --dur-fast: 500ms;
   --dur-base: 800ms;
   --dur-slow: 1200ms;
   --dur-photo: 1600ms;
@@ -21,10 +27,13 @@
 @theme inline {
   --font-sans: var(--font-manrope);
   --font-arabic: var(--font-readex);
+  --font-serif: var(--font-fraunces);
+  --font-serif-ar: var(--font-messiri);
 }
 
 @layer base {
-  html { background: var(--color-ink); scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  html { background: var(--color-page); scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+  a, button, summary { touch-action: manipulation; }
   body { font-family: var(--font-sans); color: var(--color-fg-muted); text-wrap: pretty; }
   html[lang="ar"] body { font-family: var(--font-arabic); }
   h1, h2, h3 { text-wrap: balance; }
@@ -37,15 +46,15 @@
 
 /* ---- type roles (DESIGN-BRIEF §3). Arabic override follows each Latin rule. ---- */
 @layer components {
-  .t-display  { @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-none; }
-  [dir="rtl"] .t-display { @apply tracking-normal leading-tight; }
-  .t-tagline  { @apply text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight; }
-  [dir="rtl"] .t-tagline { @apply tracking-normal leading-snug; }
-  .t-h2       { @apply text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight leading-tight; }
-  [dir="rtl"] .t-h2 { @apply tracking-normal leading-snug; }
+  .t-display  { @apply font-serif text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight leading-[0.95]; }
+  [dir="rtl"] .t-display { @apply font-serif-ar font-bold tracking-normal leading-tight; }
+  .t-tagline  { @apply font-serif text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight leading-tight; }
+  [dir="rtl"] .t-tagline { @apply font-serif-ar font-medium tracking-normal leading-snug; }
+  .t-h2       { @apply font-serif text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.05]; }
+  [dir="rtl"] .t-h2 { @apply font-serif-ar font-bold tracking-normal leading-snug; }
   .t-h3       { @apply text-xl font-semibold tracking-normal leading-snug; }
   [dir="rtl"] .t-h3 { @apply text-2xl leading-normal; }
-  .t-eyebrow  { @apply text-xs font-semibold tracking-widest uppercase leading-normal text-saffron; }
+  .t-eyebrow  { @apply text-xs font-semibold tracking-widest uppercase leading-normal text-saffron-deep; }
   [dir="rtl"] .t-eyebrow { @apply text-sm tracking-normal; }
   .t-lead     { @apply text-lg md:text-xl font-normal tracking-normal leading-relaxed; }
   [dir="rtl"] .t-lead { @apply text-xl md:text-2xl; }
@@ -61,14 +70,14 @@
   [dir="rtl"] .t-price { @apply text-lg; }
   .t-faq-q    { @apply text-lg font-medium leading-snug; }
   [dir="rtl"] .t-faq-q { @apply text-xl leading-normal; }
-  .t-wordmark { @apply text-lg font-semibold tracking-tight leading-none; }
-  [dir="rtl"] .t-wordmark { @apply text-xl tracking-normal; }
+  .t-wordmark { @apply font-serif text-xl italic leading-none; }
+  [dir="rtl"] .t-wordmark { @apply font-serif-ar not-italic font-bold text-xl; }
 
   /* The only gradient in the site, and only on text. Applied per hero line so
      the bright end starts every line; mirrored in RTL so white sits where
      reading begins. */
-  .t-gradient { @apply bg-linear-to-r from-fg to-fg-muted bg-clip-text text-transparent; }
-  [dir="rtl"] .t-gradient { @apply bg-linear-to-l; }
+  .t-em { @apply font-serif italic text-saffron-deep; }
+  [dir="rtl"] .t-em { @apply font-serif-ar not-italic; }
 
   .container-page { @apply mx-auto w-full max-w-6xl px-4 md:px-8; }
   .section-y { @apply py-16 md:py-24; }
@@ -79,12 +88,13 @@
     /* t-button inlined: Tailwind v4 cannot @apply a class defined in the same layer. */
     @apply text-sm md:text-base font-semibold tracking-normal leading-none
            inline-flex items-center justify-center gap-2 rounded-full px-6 py-3
-           transition-colors duration-700 ease-fluid active:scale-[0.98];
+           transition-[background-color,color,border-color,scale] duration-300 ease-fluid active:scale-[0.96];
   }
   [dir="rtl"] .btn { @apply text-base md:text-lg; }
   .btn-lg { @apply px-8 py-4; }
   .btn-primary { @apply bg-saffron text-ink hover:bg-saffron-hover; }
-  .btn-secondary { @apply border border-white/20 text-fg hover:border-white/60 hover:bg-white/5; }
+  .btn-secondary { @apply border border-fg/20 text-fg hover:border-fg/50 hover:bg-fg/5; }
+  .btn-ghost-light { @apply border border-white/30 bg-white/10 text-white backdrop-blur-md hover:bg-white/20; }
 }
 
 /* ---- motion states (reveal.ts toggles the classes; CSS owns the look) ----
@@ -101,63 +111,65 @@
 }
 .js [data-reveal="scale"].is-revealed { scale: 1; }
 
-.js [data-word] { opacity: 0.3; transition: opacity var(--dur-fast) var(--ease-fluid); }
-.js [data-word].is-lit { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
-  .js [data-reveal], .js [data-word] { transition: none; }
+  .js [data-reveal] { transition: none; }
   .js [data-reveal] { opacity: 1; translate: 0 0; scale: 1; }
-  .js [data-word] { opacity: 1; }
 }
 
-/* ---- bento cut-out language (bento-cutout-style skill) ----
-   Windows are rounded photo blocks. A .bite is a page-coloured piece cut out
-   of one corner with concave fillets; whatever sits in it (a dish, a button)
-   reads as part of the page. Square the window corner the bite sits in. */
+/* ---- Zafaran shapes ---- */
 @layer components {
-  .window { @apply relative isolate overflow-hidden rounded-[2rem] bg-surface; }
-  .veil { @apply absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/35 to-black/10; }
+  .rule { @apply border-fg/15; }
+  .double-rule { border-top: 3px double color-mix(in srgb, var(--color-fg) 30%, transparent); }
 
-  .bite { --r: 1.5rem; --bite-bg: var(--color-ink); position: absolute; z-index: 2; background: var(--bite-bg); }
-  .bite::before, .bite::after {
-    content: ""; position: absolute; width: var(--r); height: var(--r); pointer-events: none;
-    --fx: inherit; --fy: inherit;
-    background: radial-gradient(circle at var(--fx) var(--fy), transparent calc(var(--r) - 0.5px), var(--bite-bg) var(--r));
-  }
-  .bite-be { bottom: -1px; inset-inline-end: -1px; border-start-start-radius: var(--r); --fx: 0; --fy: 0; }
-  .bite-be::before { bottom: calc(100% - 1px); inset-inline-end: 0; }
-  .bite-be::after { bottom: 0; inset-inline-end: calc(100% - 1px); }
-  [dir="rtl"] .bite-be { --fx: 100%; }
-  .bite-bs { bottom: -1px; inset-inline-start: -1px; border-start-end-radius: var(--r); --fx: 100%; --fy: 0; }
-  .bite-bs::before { bottom: calc(100% - 1px); inset-inline-start: 0; }
-  .bite-bs::after { bottom: 0; inset-inline-start: calc(100% - 1px); }
-  [dir="rtl"] .bite-bs { --fx: 0; }
-  .bite-te { top: -1px; inset-inline-end: -1px; border-end-start-radius: var(--r); --fx: 0; --fy: 100%; }
-  .bite-te::before { top: calc(100% - 1px); inset-inline-end: 0; }
-  .bite-te::after { top: 0; inset-inline-end: calc(100% - 1px); }
-  [dir="rtl"] .bite-te { --fx: 100%; }
+  /* Sized to always fit the page container on one line (≈3.5em wide). */
+  .wordmark { @apply block select-none whitespace-nowrap font-serif leading-[0.82] tracking-tight; font-size: clamp(4rem, 20vw, 18.5rem); }
+  [dir="rtl"] .wordmark { @apply font-serif-ar font-bold tracking-normal leading-[1.15]; font-size: clamp(4rem, 24vw, 20rem); }
 
-  /* Top-centre tab of a band; holds the section title. */
-  .dip {
-    --r: 1.5rem; --bite-bg: var(--color-ink);
-    position: absolute; top: -1px; left: 50%; translate: -50% 0; z-index: 2;
-    background: var(--bite-bg); border-end-start-radius: var(--r); border-end-end-radius: var(--r);
-  }
-  .dip::before, .dip::after { content: ""; position: absolute; top: 0; width: var(--r); height: var(--r); }
-  .dip::before { right: calc(100% - 1px); background: radial-gradient(circle at 0 100%, transparent calc(var(--r) - 0.5px), var(--bite-bg) var(--r)); }
-  .dip::after { left: calc(100% - 1px); background: radial-gradient(circle at 100% 100%, transparent calc(var(--r) - 0.5px), var(--bite-bg) var(--r)); }
+  /* Dotted leader between a dish name and its price, like a printed menu. */
+  .leader { @apply min-w-6 flex-1 translate-y-[-0.3em] self-end border-b-2 border-dotted border-fg/25; }
 
-  /* Ticket band: half-circle notches cut from both sides at --ny. */
-  .ticket {
-    --nr: 16px; --ny: 50%;
-    mask:
-      radial-gradient(circle at 0 var(--ny), transparent var(--nr), #000 calc(var(--nr) + 0.5px)) left / 51% 100% no-repeat,
-      radial-gradient(circle at 100% var(--ny), transparent var(--nr), #000 calc(var(--nr) + 0.5px)) right / 51% 100% no-repeat;
-  }
+  /* Horizontal swipe rail with snap; scrollbar hidden. */
+  .rail { @apply flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain; scrollbar-width: none; }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail > * { @apply shrink-0 snap-start; }
 
-  .wordmark {
-    @apply block select-none font-bold uppercase leading-[0.8] tracking-tighter;
-    font-size: clamp(4rem, 19vw, 20rem);
-  }
-  [dir="rtl"] .wordmark { @apply tracking-normal leading-none; }
+  .press { @apply transition-[scale] duration-200 ease-fluid active:scale-[0.97]; }
+
+  /* Choice chip: a radio styled as a pill. */
+  .chip { @apply transition-[scale,background-color,color,border-color] duration-200 ease-fluid active:scale-[0.97] relative inline-flex min-w-12 cursor-pointer items-center justify-center rounded-full border border-fg/20 px-4 py-3 text-sm font-semibold text-fg has-[:checked]:border-fg has-[:checked]:bg-fg has-[:checked]:text-page has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-saffron-deep; }
+  .chip input { @apply absolute inset-0 cursor-pointer opacity-0; }
+
+  .marquee-track { animation: marquee 38s linear infinite; }
+  [dir="rtl"] .marquee-track { animation-direction: reverse; }
+  @keyframes marquee { to { translate: -50% 0; } }
+  @media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+}
+
+/* ---- photo motion ----
+   .rise: wordmark letters slide up out of the baseline on load.
+   .wipe: a photo opens upward like a blind (clip-path), staggered by --d.
+   .zoom: the photo inside eases from 1.12 to 1 as it scrolls through view
+   (scroll-driven, no JS; browsers without it just show the photo).
+   Images fade in once loaded; a fail-safe shows them after 2.5s regardless. */
+.rise { animation: rise 1s var(--ease-fluid) both; animation-delay: calc(var(--i, 0) * 45ms + 80ms); }
+@keyframes rise { from { translate: 0 105%; } }
+
+.wipe { animation: wipe 1.3s var(--ease-fluid) both; animation-delay: var(--d, 0ms); }
+@keyframes wipe { from { clip-path: inset(100% 0 0 0 round 0.5rem); } to { clip-path: inset(0 0 0 0 round 0.5rem); } }
+
+@supports (animation-timeline: view()) {
+  .zoom img { animation: zoom linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+  @keyframes zoom { from { scale: 1.14; } to { scale: 1; } }
+}
+
+.js img { opacity: 0; transition: opacity 700ms var(--ease-fluid); animation: img-failsafe 0s 2.5s forwards; }
+.js img.is-loaded { opacity: 1; animation: none; }
+@keyframes img-failsafe { to { opacity: 1; } }
+img { background: var(--color-surface); }
+img.is-loaded { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .wipe, .zoom img { animation: none; }
 }

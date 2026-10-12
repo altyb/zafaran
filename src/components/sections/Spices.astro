@@ -1,0 +1,19 @@
+---
+import { getDict } from '../../lib/dict';
+import type { Locale } from '../../lib/i18n';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const d = getDict(locale);
+// Two copies side by side; the track slides by half its width and loops.
+const words = [...d.spices, ...d.spices];
+---
+<div class="mt-16 overflow-hidden bg-saffron-deep py-4 text-page md:mt-24 md:py-5" aria-hidden="true">
+  <div class="marquee-track flex w-max">
+    {words.map((w) => (
+      <span class="flex items-center gap-8 pe-8 font-serif text-2xl italic md:text-4xl rtl:font-serif-ar rtl:not-italic">
+        {w}<span class="text-saffron not-italic">✦</span>
+      </span>
+    ))}
+  </div>
+</div>

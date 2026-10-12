@@ -1,47 +1,105 @@
 ---
 import Photo from '../Photo.astro';
+import Icon from '../Icon.astro';
 import { getDict, formatPrice } from '../../lib/dict';
 import type { Locale } from '../../lib/i18n';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const d = getDict(locale);
+const m = d.menu;
 ---
+<!-- The menu as it is printed: sections, dotted leaders, prices. Dishes with
+     a photo open in place (a <details>, so it works by tap with no script);
+     on a desktop the photo also follows the pointer while hovering. -->
 <section id="menu" class="section-y">
   <div class="container-page">
-    <div class="flex flex-wrap items-end justify-between gap-4" data-reveal>
-      <div>
-        <p class="t-eyebrow">{d.menu.eyebrow}</p>
-        <h2 class="t-h2 mt-2 text-fg">{d.menu.title}</h2>
-      </div>
-      {d.menu.lead && <p class="t-body max-w-xs">{d.menu.lead}</p>}
+    <div class="text-center" data-reveal>
+      <p class="t-eyebrow">{m.eyebrow}</p>
+      <h2 class="t-h2 mt-3 text-fg">{m.title}</h2>
+      <p class="t-body mx-auto mt-4 max-w-md">{m.lead}</p>
     </div>
 
-    <!-- Masonry bento: the signature plate takes a 2×2 tile. Each price sits
-         in a bite cut from the tile's top corner. -->
-    <ul class="mt-8 grid auto-rows-[15rem] gap-3 sm:grid-cols-2 md:mt-12 lg:grid-cols-3 lg:auto-rows-[17rem]">
-      {d.menu.dishes.map((dish, i) => (
-        <li
-          class:list={['window group rounded-se-none', i === 0 && 'sm:col-span-2 sm:row-span-2', i === 5 && 'sm:col-span-2 lg:col-span-1']}
-          data-reveal
-        >
-          <Photo
-            id={dish.photo.id}
-            alt={dish.photo.alt}
-            ratio="4/3"
-            sizes={i === 0 ? '(min-width: 1024px) 64vw, (min-width: 640px) 92vw, 92vw' : '(min-width: 1024px) 32vw, (min-width: 640px) 46vw, 92vw'}
-            class="absolute inset-0 -z-20 size-full object-cover transition-transform duration-700 ease-fluid group-hover:scale-[1.04]"
-          />
-          <div class="veil"></div>
-          <p class="bite bite-te t-price px-4 pt-2.5 pb-3 text-saffron [--r:1.25rem]">{formatPrice(locale, dish.price)}</p>
-          <div class="absolute inset-x-0 bottom-0 p-5 md:p-6">
-            <h3 class:list={['text-fg', i === 0 ? 't-h2' : 't-h3']}>{dish.name}</h3>
-            <p class:list={['t-small mt-2 max-w-md text-fg/75', i !== 0 && 'line-clamp-2']}>{dish.desc}</p>
-          </div>
-        </li>
-      ))}
-    </ul>
+    <!-- Phone: section chips that stay under the masthead and swipe sideways. -->
+    <nav aria-label={m.eyebrow} class="sticky top-16 z-30 -mx-4 mt-8 bg-page/90 px-4 py-3 backdrop-blur md:hidden">
+      <div class="rail">
+        {m.sections.map((s, i) => (
+          <a href={`#menu-${i}`} class="press rounded-full border border-fg/20 px-4 py-2 text-sm font-semibold text-fg">{s.title}</a>
+        ))}
+      </div>
+    </nav>
 
-    <p class="t-small mt-8" data-reveal>{d.menu.note}</p>
+    <div class="mt-6 rounded-[0.5rem] border border-fg/20 p-1.5 md:mt-12">
+      <div class="grid gap-x-14 gap-y-12 rounded-[0.35rem] border border-fg/20 px-5 py-10 md:grid-cols-2 md:px-12 md:py-14">
+        {m.sections.map((s, i) => (
+          <div id={`menu-${i}`} class="scroll-mt-32" data-reveal>
+            <h3 class="flex items-center gap-4 font-serif text-3xl italic text-saffron-deep rtl:font-serif-ar rtl:not-italic">
+              {s.title}<span class="h-px flex-1 bg-fg/15"></span>
+            </h3>
+            <ul class="mt-5 space-y-5">
+              {s.items.map((it) => {
+                const row = (
+                  <span class="flex items-baseline gap-2">
+                    <span class="t-body font-semibold text-fg">{it.name}</span>
+                    {it.mark && <span class="rounded-full border border-fg/25 px-1.5 text-[11px] font-semibold leading-4">{it.mark}</span>}
+                    {it.photo && <Icon name="camera" class="size-4 text-saffron-deep" />}
+                    <span class="leader"></span>
+                    <span class="t-price whitespace-nowrap text-fg">{formatPrice(locale, it.price)}</span>
+                  </span>
+                );
+                return (
+                  <li>
+                    {it.photo ? (
+                      <details class="dish group" data-photo={`https://images.unsplash.com/photo-${it.photo.id}?w=480&h=360&fit=crop&q=75&auto=format`}>
+                        <summary class="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                          {row}
+                          <span class="t-small mt-1 block">{it.desc}</span>
+                        </summary>
+                        <div class="dish-photo zoom mt-3 overflow-hidden rounded-[0.5rem] md:hidden">
+                          <Photo id={it.photo.id} alt={it.photo.alt} ratio="4/3" sizes="92vw" class="aspect-[4/3] w-full object-cover" />
+                        </div>
+                      </details>
+                    ) : (
+                      <>
+                        {row}
+                        <span class="t-small mt-1 block">{it.desc}</span>
+                      </>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <p class="t-small mt-6 flex flex-wrap items-center justify-between gap-2">
+      <span>{m.note}</span>
+      <span class="inline-flex items-center gap-1.5"><Icon name="camera" class="size-4 text-saffron-deep" />{m.tapHint}</span>
+    </p>
   </div>
+
+  <!-- Desktop hover preview, placed by the script. -->
+  <img id="dish-float" alt="" aria-hidden="true" class="is-loaded pointer-events-none fixed top-0 left-0 z-40 hidden w-60 -rotate-3 rounded-[0.5rem] shadow-2xl md:block" style="opacity:0" />
 </section>
+
+<style>
+  .dish .dish-photo { animation: open-photo 400ms var(--ease-fluid); }
+  @keyframes open-photo { from { opacity: 0; translate: 0 -0.5rem; } }
+  #dish-float { transition: opacity 200ms ease-out; }
+</style>
+
+<script>
+  const float = document.getElementById('dish-float') as HTMLImageElement;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (fine && float) {
+    document.querySelectorAll<HTMLElement>('.dish').forEach((el) => {
+      el.addEventListener('pointerenter', () => { float.src = el.dataset.photo!; float.style.opacity = '1'; });
+      el.addEventListener('pointerleave', () => { float.style.opacity = '0'; });
+      el.addEventListener('pointermove', (e) => {
+        float.style.translate = `${e.clientX + 24}px ${e.clientY - 120}px`;
+      });
+    });
+  }
+</script>
