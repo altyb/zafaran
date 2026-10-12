@@ -1,48 +1,73 @@
 ---
 import Photo from '../Photo.astro';
 import Icon from '../Icon.astro';
-import { getDict, whatsappUrl } from '../../lib/dict';
+import { getDict, whatsappUrl, formatPrice } from '../../lib/dict';
 import type { Locale } from '../../lib/i18n';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const d = getDict(locale);
+const dish = d.menu.dishes[0];
 ---
-<section id="hero" class="relative isolate flex min-h-svh items-end overflow-hidden">
-  <!-- LCP element: eager, high priority, full viewport width. -->
-  <Photo
-    id={d.hero.photo.id}
-    alt={d.hero.photo.alt}
-    ratio="16/9"
-    sizes="100vw"
-    priority
-    class="absolute inset-0 -z-10 size-full object-cover"
-  />
-  <!-- Flat scrim, never a gradient. -->
-  <div class="absolute inset-0 -z-10 bg-scrim"></div>
+<section id="hero" class="p-2 md:p-3">
+  <!-- One rounded window; the corner bite holds a dish from the menu. The
+       window corner under the bite is square so no hairline shows there. -->
+  <div class="window flex min-h-[calc(100svh-1rem)] items-end rounded-ee-none md:min-h-[calc(100svh-1.5rem)]">
+    <!-- LCP element: eager, high priority, full viewport width. -->
+    <Photo
+      id={d.hero.photo.id}
+      alt={d.hero.photo.alt}
+      ratio="16/9"
+      sizes="100vw"
+      priority
+      class="absolute inset-0 -z-20 size-full object-cover"
+    />
+    <div class="veil"></div>
 
-  <div class="container-page pt-24 pb-16 md:pb-24">
-    <p class="t-eyebrow" data-reveal data-reveal-delay="0">{d.hero.eyebrow}</p>
+    <div class="w-full px-5 pt-28 pb-28 md:px-10 md:pb-12 md:pe-[22rem]">
+      <p class="t-eyebrow" data-reveal data-reveal-delay="0">{d.hero.eyebrow}</p>
 
-    <h1 class="t-display mt-4 max-w-[680px]">
-      {d.hero.lines.map((line, i) => (
-        <span class="block t-gradient" data-reveal data-reveal-delay={120 + i * 120}>{line}</span>
-      ))}
-    </h1>
+      <h1 class="t-display mt-4 max-w-[680px]">
+        {d.hero.lines.map((line, i) => (
+          <span class="block t-gradient" data-reveal data-reveal-delay={120 + i * 120}>{line}</span>
+        ))}
+      </h1>
 
-    <p class="t-lead mt-4 max-w-[680px] text-fg md:mt-6" data-reveal data-reveal-delay="360">
-      {d.hero.lead}
-    </p>
+      <p class="t-lead mt-4 max-w-[560px] text-fg/85 md:mt-6" data-reveal data-reveal-delay="360">
+        {d.hero.lead}
+      </p>
 
-    <div class="mt-8 flex flex-wrap gap-4" data-reveal data-reveal-delay="480">
-      <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-        {d.hero.primary}
-        <Icon name="whatsapp-logo" class="size-5" />
-      </a>
-      <a href="#menu" class="btn btn-secondary btn-lg">
-        {d.hero.secondary}
-        <Icon name="arrow-right" class="size-5" mirror />
-      </a>
+      <div class="mt-8 flex flex-wrap gap-3" data-reveal data-reveal-delay="480">
+        <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          {d.hero.primary}
+          <Icon name="whatsapp-logo" class="size-5" />
+        </a>
+        <a href="#menu" class="btn btn-secondary btn-lg bg-white/10 backdrop-blur-md">
+          {d.hero.secondary}
+        </a>
+      </div>
     </div>
+
+    <!-- Phone: a round arrow in the bite. Desktop: a dish card. -->
+    <a href="#menu" aria-label={d.hero.secondary} class="bite bite-be p-2.5 md:hidden">
+      <span class="flex size-14 items-center justify-center rounded-full bg-saffron text-ink">
+        <Icon name="caret-down" class="size-6" />
+      </span>
+    </a>
+    <a href="#menu" class="bite bite-be group hidden w-[20rem] p-3 md:block" data-reveal data-reveal-delay="600">
+      <span class="flex items-center gap-3 rounded-[1.25rem] bg-surface p-2 pe-4 transition-colors duration-700 ease-fluid group-hover:bg-surface-raised">
+        <span class="size-20 shrink-0 overflow-hidden rounded-[0.9rem]">
+          <Photo id={dish.photo.id} alt="" ratio="4/3" sizes="80px" class="size-full object-cover" />
+        </span>
+        <span class="min-w-0 flex-1">
+          <span class="t-eyebrow block">{d.menu.eyebrow}</span>
+          <span class="t-body mt-1 block truncate font-semibold text-fg">{dish.name}</span>
+          <span class="t-price mt-1 block text-saffron">{formatPrice(locale, dish.price)}</span>
+        </span>
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-saffron text-ink transition-transform duration-700 ease-fluid group-hover:-rotate-45 rtl:group-hover:rotate-45">
+          <Icon name="arrow-right" class="size-4" mirror />
+        </span>
+      </span>
+    </a>
   </div>
 </section>

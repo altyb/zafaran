@@ -12,35 +12,43 @@ const d = getDict(locale);
 // the number can be bidi-isolated — otherwise Arabic reorders the plus sign.
 const [callLabel, callNumber = ''] = d.cta.secondary.split(/(?=\+)/);
 ---
-<section id="cta" class="relative isolate overflow-hidden">
-  <Photo
-    id={d.cta.photo.id}
-    alt={d.cta.photo.alt}
-    ratio="16/9"
-    sizes="100vw"
-    class="absolute inset-0 -z-10 size-full object-cover"
-  />
-  <!-- Flat scrim, never a gradient. -->
-  <div class="absolute inset-0 -z-10 bg-scrim"></div>
+<section id="cta" class="px-2 md:px-3">
+  <!-- Photo window; the WhatsApp button sits in a bite cut from its top corner. -->
+  <div class="window rounded-se-none">
+    <Photo
+      id={d.cta.photo.id}
+      alt={d.cta.photo.alt}
+      ratio="16/9"
+      sizes="100vw"
+      class="absolute inset-0 -z-20 size-full object-cover"
+    />
+    <div class="veil"></div>
 
-  <div class="container-page py-24 md:py-32">
-    <div class="max-w-[680px]">
-      <p class="t-eyebrow" data-reveal>{d.cta.eyebrow}</p>
-      <h2 class="t-h2 mt-2 text-fg" data-reveal>{d.cta.title}</h2>
-      <p class="t-lead mt-4 text-fg" data-reveal>{d.cta.lead}</p>
+    <a href={whatsappUrl(locale)} target="_blank" rel="noopener" aria-label={d.cta.primary} class="bite bite-te group p-3 [--r:1.5rem]">
+      <span class="flex size-16 items-center justify-center rounded-full bg-saffron text-ink transition-transform duration-700 ease-fluid group-hover:scale-105 md:size-20">
+        <Icon name="whatsapp-logo" class="size-7 md:size-8" />
+      </span>
+    </a>
 
-      <div class="mt-8 flex flex-wrap gap-4" data-reveal>
-        <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-          {d.cta.primary}
-          <Icon name="whatsapp-logo" class="size-5" />
-        </a>
-        <a href={`tel:${site.phoneE164}`} class="btn btn-secondary btn-lg">
-          <Icon name="phone" class="size-5" />
-          {callLabel}{callNumber && <span dir="ltr" class="inline-block">{callNumber}</span>}
-        </a>
+    <div class="px-5 pt-36 pb-10 md:px-12 md:pt-48 md:pb-14">
+      <div class="max-w-[680px]">
+        <p class="t-eyebrow" data-reveal>{d.cta.eyebrow}</p>
+        <h2 class="t-h2 mt-2 text-fg" data-reveal>{d.cta.title}</h2>
+        <p class="t-lead mt-4 text-fg/85" data-reveal>{d.cta.lead}</p>
+
+        <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+          <a href={whatsappUrl(locale)} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+            {d.cta.primary}
+            <Icon name="whatsapp-logo" class="size-5" />
+          </a>
+          <a href={`tel:${site.phoneE164}`} class="btn btn-secondary btn-lg bg-white/10 backdrop-blur-md">
+            <Icon name="phone" class="size-5" />
+            {callLabel}{callNumber && <span dir="ltr" class="inline-block">{callNumber}</span>}
+          </a>
+        </div>
+
+        <p class="t-small mt-8 text-fg/70" data-reveal>{d.cta.fallback}</p>
       </div>
-
-      <p class="t-small mt-8 text-fg-muted" data-reveal>{d.cta.fallback}</p>
     </div>
   </div>
 </section>

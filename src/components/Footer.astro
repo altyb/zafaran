@@ -7,8 +7,8 @@ interface Props { locale: Locale }
 const { locale } = Astro.props;
 const d = getDict(locale);
 ---
-<footer class="border-t border-line bg-surface-deep pt-16 pb-24 md:py-16">
-  <div class="container-page">
+<footer class="px-2 pt-3 pb-24 md:px-3 md:pb-3">
+  <div class="overflow-hidden rounded-[2rem] bg-surface px-6 pt-12 md:px-12 md:pt-16">
     <div class="grid gap-8 md:grid-cols-4 md:gap-12">
       <div class="md:col-span-2">
         <p class="t-wordmark text-fg">{d.common.brand}</p>
@@ -57,12 +57,14 @@ const d = getDict(locale);
       </div>
     </div>
 
-    <div class="mt-12 flex flex-col gap-4 border-t border-line pt-8 md:flex-row md:items-center md:justify-between">
+    <div class="mt-12 flex flex-col gap-4 border-t border-dashed border-line pt-8 md:flex-row md:items-center md:justify-between">
       <p class="t-small">{d.footer.copyright}</p>
       <ul class="flex gap-6">
         <li><a href={localePath(locale, 'privacy/')} class="t-small transition-colors duration-700 ease-fluid hover:text-saffron">{d.footer.privacy}</a></li>
         <li><a href={localePath(locale, 'terms/')} class="t-small transition-colors duration-700 ease-fluid hover:text-saffron">{d.footer.terms}</a></li>
       </ul>
     </div>
+
+    <p class="wordmark -mb-[0.06em] mt-10 text-center text-fg/[0.07]" aria-hidden="true">{d.common.brand}</p>
   </div>
 </footer>

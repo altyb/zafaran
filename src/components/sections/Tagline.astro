@@ -1,4 +1,5 @@
 ---
+import Icon from '../Icon.astro';
 import { getDict } from '../../lib/dict';
 import type { Locale } from '../../lib/i18n';
 
@@ -12,10 +13,16 @@ const d = getDict(locale);
 const lines = d.tagline.lines.map((line) => line.split(' '));
 const full = d.tagline.lines.join(' ');
 ---
-<section id="tagline" class="section-y">
-  <div class="container-page">
-    <p class="t-tagline max-w-4xl text-fg" data-tagline aria-label={full}>
-      {lines.map((words, li) => (
+<!-- Surface band whose top edge dips in the middle around the saffron mark. -->
+<section id="tagline" class="px-2 md:px-3">
+  <div class="relative rounded-[2rem] bg-surface px-6 pt-28 pb-16 md:px-12 md:pt-32 md:pb-24">
+    <div class="dip px-5 pb-4">
+      <span class="flex size-14 items-center justify-center rounded-full bg-saffron text-ink">
+        <Icon name="fork-knife" class="size-6" />
+      </span>
+    </div>
+    <p class="t-tagline mx-auto max-w-4xl text-center text-fg" data-tagline aria-label={full}>
+      {lines.map((words) => (
         <span class="block" aria-hidden="true">
           {words.map((word, wi) => (
             <>

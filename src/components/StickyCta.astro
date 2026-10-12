@@ -9,9 +9,9 @@ const d = getDict(locale);
 ---
 <div
   id="sticky-cta"
-  class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-glass p-4 backdrop-blur-xl md:hidden"
+  class="fixed inset-x-3 bottom-3 z-40 rounded-full border border-line bg-glass p-2 backdrop-blur-xl md:hidden"
 >
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-2">
     <a
       href={whatsappUrl(locale)}
       target="_blank"
@@ -34,8 +34,8 @@ const d = getDict(locale);
 <style>
   /* The script toggles .is-visible once the hero leaves the viewport. */
   #sticky-cta {
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-    translate: 0 100%;
+    margin-bottom: env(safe-area-inset-bottom);
+    translate: 0 calc(100% + 1.5rem);
     transition: translate var(--dur-fast) var(--ease-fluid);
   }
   #sticky-cta.is-visible { translate: 0 0; }
